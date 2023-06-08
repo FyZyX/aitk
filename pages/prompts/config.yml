@@ -1,0 +1,9 @@
+templates:
+  test-template:
+    variables:
+      word_1:
+        type: string
+      word_2:
+        type: string
+      word_3:
+        type: string
