@@ -4,7 +4,7 @@ import string
 import yaml
 
 
-class Prompt:
+class PromptTemplate:
     _config_root = pathlib.Path(__file__).parent / "prompts"
     _prompt_template_path = _config_root / "templates"
 
