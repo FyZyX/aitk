@@ -1,3 +1,4 @@
+import functools
 import os
 
 import bs4
@@ -17,13 +18,18 @@ def get_lesson_blocks():
     return content_blocks
 
 
-def reformat_content(lesson, model):
+def reformat_block(model, lesson):
     prompt = llm.prompt.PromptTemplate("alg-calc-html-converter")
     token_limit = llm.anthropic.token_count(lesson) + 150
     return model.generate(
         prompt=prompt.render(lesson=lesson),
         max_tokens=token_limit,
     )
+
+
+def reformat_blocks(model, blocks):
+    f = functools.partial(reformat_block, model)
+    yield from map(f, blocks)
 
 
 def main():
@@ -33,11 +39,11 @@ def main():
     blocks = get_lesson_blocks()
     if st.button("Reformat Lesson"):
         formatted_blocks = []
-        for block in blocks:
-            with st.spinner():
-                result = reformat_content(str(block), model)
-            st.markdown(result)
-            formatted_blocks.append(result)
+        with st.spinner():
+            for block in reformat_blocks(model, blocks):
+                st.markdown(block)
+                formatted_blocks.append(block)
+
         st.session_state["lesson"] = "\n\n".join(formatted_blocks)
     lesson = st.session_state.get("lesson")
     st.code(lesson)
