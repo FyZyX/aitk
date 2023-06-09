@@ -46,11 +46,15 @@ class LessonFormatter:
             self._load_lesson_blocks()
         yield from map(self._reformat_block, self._blocks)
 
-    def reformat_lesson(self):
+    def process_blocks(self):
         if not self._formatted_blocks:
             for block in self._reformat_blocks():
                 self._formatted_blocks.append(block)
                 yield block
+        else:
+            yield from self._formatted_blocks
+
+    def result(self):
         return "\n\n".join(self._formatted_blocks)
 
 
@@ -65,12 +69,11 @@ def main():
         progress_text = "Formatting lesson. Please wait."
         progress_bar = st.progress(0, text=progress_text)
         with st.spinner():
-            lesson = lesson_formatter.reformat_lesson()
             n = len(lesson_formatter)
-            for i, block in enumerate(lesson):
+            for i, block in enumerate(lesson_formatter.process_blocks()):
                 st.markdown(block)
                 progress_bar.progress((i + 1) / n, text=progress_text)
-        st.session_state["lesson"] = lesson
+        st.session_state["lesson"] = lesson_formatter.result()
 
     lesson = st.session_state.get("lesson")
     st.code(lesson)
