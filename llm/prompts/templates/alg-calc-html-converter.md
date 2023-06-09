@@ -1,6 +1,6 @@
 We need to convert the original HTML content into markdown.
 Remember that, in markdown, ALL mathematical notation must be wrapped in 
-$ ... $ for inline math or $$ ... $$ for display mode, where '...' 
+$$ ... $$ for inline math or $$$$ ... $$$$ for display mode, where '...' 
 is a LaTeX expression.
 
 Please remove any unnecessary structural markup, leave just the pertinent content.

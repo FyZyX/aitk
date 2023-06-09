@@ -18,16 +18,22 @@ class LessonFormatter:
         self._lesson = lesson
         self._model = model
         self._template = template
-        self._blocks = None
-        self._formatted_blocks = None
+        self._blocks = []
+        self._formatted_blocks = []
+
+    def __len__(self):
+        if not self._blocks:
+            self._load_lesson_blocks()
+        return len(self._blocks)
 
     def _load_lesson_blocks(self):
         path = f"lessons/lesson-{self._chapter}-{self._lesson}.html"
         with open(path) as file:
             content = bs4.BeautifulSoup(file.read(), 'html.parser')
-        return content.find_all("safe-richtext")
+        self._blocks = content.find_all("safe-richtext")
 
     def _reformat_block(self, lesson):
+        lesson = str(lesson)
         prompt = self._template.render(lesson=lesson)
         token_limit = self._model.token_count(lesson) + 150
         return self._model.generate(
@@ -56,10 +62,14 @@ def main():
     lesson_formatter = LessonFormatter(1, 1, model, prompt_template)
 
     if st.button("Reformat Lesson"):
+        progress_text = "Formatting lesson. Please wait."
+        progress_bar = st.progress(0, text=progress_text)
         with st.spinner():
             lesson = lesson_formatter.reformat_lesson()
-            for block in lesson:
+            n = len(lesson_formatter)
+            for i, block in enumerate(lesson):
                 st.markdown(block)
+                progress_bar.progress((i + 1) / n, text=progress_text)
         st.session_state["lesson"] = lesson
 
     lesson = st.session_state.get("lesson")
