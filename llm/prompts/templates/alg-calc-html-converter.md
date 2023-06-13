@@ -7,7 +7,7 @@ We need to translate HTML content into markdown. Read through the original conte
 - Avoid splitting inline math expressions across multiple lines
 - Avoid splitting lines in the middle of bold, emphasis, or code formatting
 - Do not escape forward slashes in LaTeX expressions, meaning avoid `\\`
-- Stick to the octothorpe (#) for headings H1 (#), H2 (##), H3 (###), etc.
+- Stick to the standard headings H1 (#), H2 (##), H3 (###), etc. instead of underlines
 - Pay special attention to whitespace, clean up excessive or extraneous whitespace and ensure line continuations avoid unnecessary indentation.
 - Note that markdown images use the `[name](link)` syntax.
 
