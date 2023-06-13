@@ -1,7 +1,11 @@
+import os
 import pathlib
 
-import anthropic
 import streamlit as st
+
+import llm.anthropic
+
+API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 
 
 def concatenate_lessons(directory):
@@ -28,10 +32,16 @@ def main():
         with st.spinner():
             concatenate_lessons(path)
 
-    if st.button("Count Tokens"):
+    if st.button("Analyze"):
+        model = llm.anthropic.Claude(API_KEY)
         with open('lessons/combined_lessons.md') as outfile:
             content = outfile.read()
-        st.metric("Tokens", anthropic.count_tokens(content))
+        st.metric("Tokens", model.token_count(content))
+        with st.spinner():
+            response = model.generate(content, max_tokens=20_000)
+        st.markdown(response)
+        with open("lessons/ftc.md", "w") as file:
+            file.write(response)
 
 
 if __name__ == '__main__':
