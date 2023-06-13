@@ -57,13 +57,25 @@ class LessonFormatter:
     def result(self):
         return "\n\n".join(self._formatted_blocks)
 
+    def save(self):
+        path = f"lessons/formatted/lesson-{self._chapter}-{self._lesson}.md"
+        result = self.result()
+        with open(path, "w") as file:
+            file.write(result)
+        return result
+
 
 def main():
     st.title("Tutorial Maker")
 
     model = llm.anthropic.Claude(api_key=API_KEY)
     prompt_template = llm.prompt.PromptTemplate("alg-calc-html-converter")
-    lesson_formatter = LessonFormatter(1, 1, model, prompt_template)
+    cols = st.columns(2)
+    with cols[0]:
+        chapter = st.number_input("Chapter", min_value=1, max_value=10, step=1)
+    with cols[1]:
+        lesson_number = st.number_input("Lesson", min_value=1, max_value=4, step=1)
+    lesson_formatter = LessonFormatter(chapter, lesson_number, model, prompt_template)
 
     if st.button("Reformat Lesson"):
         progress_text = "Formatting lesson. Please wait."
@@ -73,9 +85,10 @@ def main():
             for i, block in enumerate(lesson_formatter.process_blocks()):
                 st.markdown(block)
                 progress_bar.progress((i + 1) / n, text=progress_text)
-        st.session_state["lesson"] = lesson_formatter.result()
+        result = lesson_formatter.save()
+        st.session_state["lesson"] = result
 
-    lesson = st.session_state.get("lesson")
+    lesson = st.session_state.get("lesson", "")
     st.code(lesson)
 
 
