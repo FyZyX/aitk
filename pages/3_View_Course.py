@@ -36,12 +36,18 @@ def main():
         model = llm.anthropic.Claude(API_KEY)
         with open('lessons/combined_lessons.md') as outfile:
             content = outfile.read()
+        with open('lessons/question.md') as question:
+            content += question.read()
         st.metric("Tokens", model.token_count(content))
         with st.spinner():
             response = model.generate(content, max_tokens=20_000)
         st.markdown(response)
-        with open("lessons/ftc.md", "w") as file:
+        with open("lessons/course-overview.md", "w") as file:
             file.write(response)
+
+    if st.button("Show Overview"):
+        with open("lessons/course-overview.md") as file:
+            st.markdown(file.read())
 
 
 if __name__ == '__main__':

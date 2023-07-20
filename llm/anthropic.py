@@ -17,6 +17,6 @@ class Claude:
         return self._client.completion(
             prompt=self.wrap_prompt(prompt),
             stop_sequences=[anthropic.HUMAN_PROMPT],
-            model="claude-v1-100k",
+            model="claude-2",
             max_tokens_to_sample=max_tokens,
         )["completion"]
