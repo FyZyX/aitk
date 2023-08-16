@@ -14,6 +14,14 @@ class Claude:
         return self._client.count_tokens(content)
 
     def generate(self, prompt: str, max_tokens=200):
+        return self._client.completions.create(
+            prompt=self.wrap_prompt(prompt),
+            stop_sequences=[anthropic.HUMAN_PROMPT],
+            model="claude-2",
+            max_tokens_to_sample=max_tokens,
+        ).completion
+
+    def stream(self, prompt: str, max_tokens=200):
         yield from self._client.completions.create(
             prompt=self.wrap_prompt(prompt),
             stop_sequences=[anthropic.HUMAN_PROMPT],

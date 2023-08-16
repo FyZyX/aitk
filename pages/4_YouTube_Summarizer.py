@@ -54,7 +54,7 @@ TRANSCRIPT
 ---
 {text}
 """
-        summary = claude.generate(prompt, max_tokens=25_000)
+        summary = claude.stream(prompt, max_tokens=25_000)
         completion_text = ""
         text_area = st.empty()
 
